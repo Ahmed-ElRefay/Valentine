@@ -1,1409 +1,409 @@
-<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jira-Style Header & Navigation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #F4F5F7;
-            min-height: 100vh;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: linear-gradient(180deg, #0052CC 0%, #0747A6 100%);
-            height: 56px;
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .header-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Icon Buttons */
-        .icon-btn {
-            background: transparent;
-            border: none;
-            border-radius: 3px;
-            padding: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s ease;
-            color: rgba(255,255,255,0.9);
-        }
-
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.16);
-        }
-
-        .icon-btn svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        /* Logo */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 8px;
-            text-decoration: none;
-            border-radius: 3px;
-            transition: background 0.15s ease;
-        }
-
-        .logo:hover {
-            background: rgba(255,255,255,0.16);
-        }
-
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, #2684FF 0%, #0052CC 100%);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .logo-icon svg {
-            width: 16px;
-            height: 16px;
-            stroke: white;
-            stroke-width: 2.5;
-            fill: none;
-        }
-
-        .logo-text {
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-
-        /* Navigation */
-        .nav {
-            display: flex;
-            align-items: center;
-            margin-left: 8px;
-        }
-
-        .nav-item {
-            background: transparent;
-            border: none;
-            border-radius: 3px;
-            padding: 8px 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.15s ease;
-            position: relative;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            background: rgba(255,255,255,0.16);
-        }
-
-        .nav-item svg {
-            width: 16px;
-            height: 16px;
-            opacity: 0.7;
-            stroke: currentColor;
-            fill: none;
-            transition: transform 0.2s ease;
-        }
-
-        .nav-item.active svg {
-            transform: rotate(180deg);
-        }
-
-        /* Create Button */
-        .create-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            border-radius: 3px;
-            padding: 8px 14px;
-            margin-left: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.15s ease;
-        }
-
-        .create-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .create-btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            fill: none;
-        }
-
-        /* Search */
-        .search-container {
-            position: relative;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.16);
-            border-radius: 5px;
-            padding: 6px 10px;
-            gap: 8px;
-            width: 200px;
-            transition: all 0.2s ease;
-        }
-
-        .search-box:focus-within {
-            background: white;
-            width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .search-box svg {
-            width: 16px;
-            height: 16px;
-            stroke: rgba(255,255,255,0.8);
-            fill: none;
-            flex-shrink: 0;
-        }
-
-        .search-box:focus-within svg {
-            stroke: #6B778C;
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-            width: 100%;
-        }
-
-        .search-box:focus-within input {
-            color: #172B4D;
-        }
-
-        .search-box input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .search-box:focus-within input::placeholder {
-            color: #6B778C;
-        }
-
-        .search-shortcut {
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-size: 11px;
-            color: rgba(255,255,255,0.8);
-            flex-shrink: 0;
-        }
-
-        .search-box:focus-within .search-shortcut {
-            background: #F4F5F7;
-            color: #6B778C;
-        }
-
-        /* Notification Badge */
-        .notification-wrapper {
-            position: relative;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: #FF5630;
-            color: white;
-            font-size: 10px;
-            font-weight: 600;
-            border-radius: 10px;
-            min-width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 4px;
-        }
-
-        /* User Avatar */
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00B8D9 0%, #0065FF 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
-            transition: transform 0.15s ease;
-            margin-left: 4px;
-        }
-
-        .user-avatar:hover {
-            transform: scale(1.05);
-        }
-
-        /* Dropdown Menu */
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            margin-top: 4px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1);
-            min-width: 320px;
-            overflow: hidden;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-4px);
-            transition: all 0.15s ease;
-            z-index: 1001;
-        }
-
-        .dropdown.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid #EBECF0;
-        }
-
-        .dropdown-header p {
-            font-size: 11px;
-            font-weight: 600;
-            color: #6B778C;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
-            text-decoration: none;
-            transition: background 0.1s ease;
-            cursor: pointer;
-        }
-
-        .dropdown-item:hover {
-            background: #F4F5F7;
-        }
-
-        .dropdown-item-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .dropdown-item-content h4 {
-            font-size: 14px;
-            font-weight: 500;
-            color: #172B4D;
-            margin-bottom: 2px;
-        }
-
-        .dropdown-item-content p {
-            font-size: 12px;
-            color: #6B778C;
-        }
-
-        .dropdown-footer {
-            padding: 8px 16px;
-            border-top: 1px solid #EBECF0;
-        }
-
-        .dropdown-footer a {
-            display: block;
-            padding: 8px 0;
-            font-size: 14px;
-            color: #0052CC;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .dropdown-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* ===== NAVIGATION DRAWER ===== */
-        .drawer-overlay {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 900;
-        }
-
-        .drawer-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .drawer {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            bottom: 0;
-            width: 280px;
-            background: white;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 950;
-            overflow-y: auto;
-        }
-
-        .drawer.show {
-            transform: translateX(0);
-        }
-
-        .drawer-section {
-            padding: 16px 0;
-            border-bottom: 1px solid #EBECF0;
-        }
-
-        .drawer-section:last-child {
-            border-bottom: none;
-        }
-
-        .drawer-section-title {
-            padding: 8px 20px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #6B778C;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .drawer-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 20px;
-            color: #42526E;
-            text-decoration: none;
-            transition: all 0.15s ease;
-            cursor: pointer;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        .drawer-item:hover {
-            background: #F4F5F7;
-            color: #172B4D;
-        }
-
-        .drawer-item.active {
-            background: #E9F2FF;
-            color: #0052CC;
-        }
-
-        .drawer-item svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-            flex-shrink: 0;
-        }
-
-        .drawer-item-badge {
-            margin-left: auto;
-            background: #DFE1E6;
-            color: #42526E;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        .drawer-item.active .drawer-item-badge {
-            background: #0052CC;
-            color: white;
-        }
-
-        .drawer-project {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 20px;
-            text-decoration: none;
-            transition: background 0.15s ease;
-            cursor: pointer;
-        }
-
-        .drawer-project:hover {
-            background: #F4F5F7;
-        }
-
-        .drawer-project-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .drawer-project-info h4 {
-            font-size: 14px;
-            font-weight: 500;
-            color: #172B4D;
-        }
-
-        .drawer-project-info p {
-            font-size: 12px;
-            color: #6B778C;
-        }
-
-        .drawer-create-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 8px 16px;
-            padding: 10px 16px;
-            background: #0052CC;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .drawer-create-btn:hover {
-            background: #0747A6;
-        }
-
-        .drawer-create-btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            fill: none;
-        }
-
-        /* ===== SECONDARY NAVIGATION ===== */
-        .secondary-nav {
-            background: #FAFBFC;
-            border-bottom: 1px solid #DFE1E6;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            height: 48px;
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-
-        .secondary-nav.drawer-open {
-            left: 280px;
-        }
-
-        .project-selector {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: background 0.15s ease;
-        }
-
-        .project-selector:hover {
-            background: #EBECF0;
-        }
-
-        .project-selector-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            background: #0052CC;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .project-selector span {
-            font-size: 14px;
-            font-weight: 600;
-            color: #172B4D;
-        }
-
-        .project-selector svg {
-            width: 16px;
-            height: 16px;
-            stroke: #6B778C;
-            fill: none;
-        }
-
-        .tab-nav {
-            display: flex;
-            margin-left: 32px;
-            gap: 4px;
-        }
-
-        .tab-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 14px 12px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #42526E;
-            text-decoration: none;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: all 0.15s ease;
-        }
-
-        .tab-item:hover {
-            color: #172B4D;
-            background: #EBECF0;
-        }
-
-        .tab-item.active {
-            color: #0052CC;
-            border-bottom-color: #0052CC;
-        }
-
-        .tab-item svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            fill: none;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            margin-top: 104px;
-            padding: 24px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .main-content.drawer-open {
-            margin-left: 280px;
-        }
-
-        .content-card {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-        }
-
-        .content-card h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #172B4D;
-            margin-bottom: 8px;
-        }
-
-        .content-card p {
-            font-size: 14px;
-            color: #6B778C;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav {
-                display: none;
-            }
-
-            .search-box {
-                width: 150px;
-            }
-
-            .search-box:focus-within {
-                width: 200px;
-            }
-
-            .secondary-nav {
-                padding: 0 12px;
-            }
-
-            .tab-nav {
-                margin-left: 16px;
-                gap: 0;
-            }
-
-            .tab-item span {
-                display: none;
-            }
-        }
-    </style>
-</head>
-<body>
-&lt;!&ndash; Header &ndash;&gt;
-<header class="header">
-    <div class="header-left">
-        &lt;!&ndash; Menu Toggle (for drawer) &ndash;&gt;
-        <button class="icon-btn" id="menuToggle" title="Menu">
-            <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-
-        &lt;!&ndash; App Switcher &ndash;&gt;
-        <button class="icon-btn" title="App Switcher">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        </button>
-
-        &lt;!&ndash; Logo &ndash;&gt;
-        <a href="#" class="logo">
-            <div class="logo-icon">
-                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <span class="logo-text">Jira</span>
-        </a>
-
-        &lt;!&ndash; Navigation &ndash;&gt;
-        <nav class="nav">
-            <div style="position: relative;">
-                <button class="nav-item" data-dropdown="projects">
-                    Projects
-                    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <div class="dropdown" id="dropdown-projects">
-                    <div class="dropdown-header">
-                        <p>Recent projects</p>
-                    </div>
-                    <a href="#" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: #0052CC;">CP</div>
-                        <div class="dropdown-item-content">
-                            <h4>Cloud Platform</h4>
-                            <p>Software project</p>
-                        </div>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: #36B37E;">MA</div>
-                        <div class="dropdown-item-content">
-                            <h4>Mobile App</h4>
-                            <p>Software project</p>
-                        </div>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: #FF5630;">DS</div>
-                        <div class="dropdown-item-content">
-                            <h4>Design System</h4>
-                            <p>Software project</p>
-                        </div>
-                    </a>
-                    <div class="dropdown-footer">
-                        <a href="#">View all projects</a>
-                    </div>
-                </div>
-            </div>
-
-            <button class="nav-item">
-                Filters
-                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-
-            <button class="nav-item">
-                Dashboards
-                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-
-            <button class="nav-item">
-                Teams
-                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-
-            <button class="create-btn">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Create
-            </button>
-        </nav>
-    </div>
-
-    <div class="header-right">
-        &lt;!&ndash; Search &ndash;&gt;
-        <div class="search-container">
-            <div class="search-box">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" placeholder="Search">
-                <span class="search-shortcut">/</span>
-            </div>
-        </div>
-
-        &lt;!&ndash; Notifications &ndash;&gt;
-        <div class="notification-wrapper">
-            <button class="icon-btn" title="Notifications">
-                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            </button>
-            <span class="notification-badge">3</span>
-        </div>
-
-        &lt;!&ndash; Help &ndash;&gt;
-        <button class="icon-btn" title="Help">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </button>
-
-        &lt;!&ndash; Settings &ndash;&gt;
-        <button class="icon-btn" title="Settings">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
-
-        &lt;!&ndash; User Avatar &ndash;&gt;
-        <button class="user-avatar" title="Account">JD</button>
-    </div>
-</header>
-
-&lt;!&ndash; Navigation Drawer &ndash;&gt;
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="drawer" id="drawer">
-    <div class="drawer-section">
-        <button class="drawer-create-btn">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Create Issue
-        </button>
-    </div>
-
-    <div class="drawer-section">
-        <div class="drawer-section-title">Planning</div>
-        <a href="#" class="drawer-item active">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-            <span>Board</span>
-            <span class="drawer-item-badge">12</span>
-        </a>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span>Backlog</span>
-            <span class="drawer-item-badge">48</span>
-        </a>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>
-            <span>Roadmap</span>
-        </a>
-    </div>
-
-    <div class="drawer-section">
-        <div class="drawer-section-title">Development</div>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            <span>Code</span>
-        </a>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
-            <span>Releases</span>
-        </a>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <span>Pages</span>
-        </a>
-    </div>
-
-    <div class="drawer-section">
-        <div class="drawer-section-title">Recent Projects</div>
-        <a href="#" class="drawer-project">
-            <div class="drawer-project-icon" style="background: #0052CC;">CP</div>
-            <div class="drawer-project-info">
-                <h4>Cloud Platform</h4>
-                <p>Software project</p>
-            </div>
-        </a>
-        <a href="#" class="drawer-project">
-            <div class="drawer-project-icon" style="background: #36B37E;">MA</div>
-            <div class="drawer-project-info">
-                <h4>Mobile App</h4>
-                <p>Software project</p>
-            </div>
-        </a>
-        <a href="#" class="drawer-project">
-            <div class="drawer-project-icon" style="background: #FF5630;">DS</div>
-            <div class="drawer-project-info">
-                <h4>Design System</h4>
-                <p>Software project</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="drawer-section">
-        <div class="drawer-section-title">Reports</div>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>Reports</span>
-        </a>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-            <span>Insights</span>
-        </a>
-    </div>
-
-    <div class="drawer-section">
-        <div class="drawer-section-title">Settings</div>
-        <a href="#" class="drawer-item">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <span>Project settings</span>
-        </a>
-    </div>
-</aside>
-
-&lt;!&ndash; Secondary Navigation &ndash;&gt;
-<nav class="secondary-nav" id="secondaryNav">
-    <div class="project-selector">
-        <div class="project-selector-icon">CP</div>
-        <span>Cloud Platform</span>
-        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-
-    <div class="tab-nav">
-        <a href="#" class="tab-item">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span>Summary</span>
-        </a>
-        <a href="#" class="tab-item active">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-            <span>Board</span>
-        </a>
-        <a href="#" class="tab-item">
-            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span>Backlog</span>
-        </a>
-        <a href="#" class="tab-item">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>Reports</span>
-        </a>
-    </div>
-</nav>
-
-&lt;!&ndash; Main Content &ndash;&gt;
-<main class="main-content" id="mainContent">
-    <div class="content-card">
-        <h2>Sprint 24 - Cloud Infrastructure</h2>
-        <p>This is a demo layout showing a Jira-style header with navigation drawer. Click the hamburger menu (☰) to toggle the sidebar navigation.</p>
-        <br>
-        <p>You can integrate this HTML into your Spring Boot + Thymeleaf templates. The CSS is inline for easy copying, but you can move it to a separate stylesheet.</p>
-    </div>
-</main>
-
-<script>
-    // DOM Elements
-    const menuToggle = document.getElementById('menuToggle');
-    const drawer = document.getElementById('drawer');
-    const drawerOverlay = document.getElementById('drawerOverlay');
-    const secondaryNav = document.getElementById('secondaryNav');
-    const mainContent = document.getElementById('mainContent');
-
-    // Toggle drawer
-    function toggleDrawer() {
-        drawer.classList.toggle('show');
-        drawerOverlay.classList.toggle('show');
-        secondaryNav.classList.toggle('drawer-open');
-        mainContent.classList.toggle('drawer-open');
-    }
-
-    menuToggle.addEventListener('click', toggleDrawer);
-    drawerOverlay.addEventListener('click', toggleDrawer);
-
-    // Dropdown handling
-    const navItems = document.querySelectorAll('.nav-item[data-dropdown]');
-
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            const dropdownId = item.getAttribute('data-dropdown');
-            const dropdown = document.getElementById(`dropdown-${dropdownId}`);
-
-            // Close all other dropdowns
-            document.querySelectorAll('.dropdown').forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove('show');
-                }
-            });
-
-            document.querySelectorAll('.nav-item').forEach(n => {
-                if (n !== item) {
-                    n.classList.remove('active');
-                }
-            });
-
-            // Toggle current dropdown
-            dropdown.classList.toggle('show');
-            item.classList.toggle('active');
-        });
-    });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.nav-item[data-dropdown]') && !e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        }
-    });
-
-    // Tab navigation
-    const tabItems = document.querySelectorAll('.tab-item');
-    tabItems.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            tabItems.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
-
-    // Drawer navigation
-    const drawerItems = document.querySelectorAll('.drawer-item');
-    drawerItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            drawerItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-        });
-    });
-</script>
-</body>
-</html>-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Love Machine 🎰</title>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root{
-            --parchment:#F5ECD7;
-            --parchment-dark:#E8DCC6;
-            --parchment-deep:#D4C9AE;
-            --cream:#FDF8EE;
-            --warm-white:#FFFDF8;
-            --ink:#3B2F2F;
-            --ink-light:#6B5B5B;
-            --ink-faded:#9A8A7A;
-            --rose:#C4878E;
-            --rose-light:#E8BFC3;
-            --rose-pale:#F2DFE1;
-            --sage:#8FA68A;
-            --sage-light:#B8CEAF;
-            --butter:#E2C97E;
-            --butter-light:#F0E4B8;
-            --sky:#A8B8C8;
-            --berry:#7A5068;
-            --berry-light:#B88FA4;
-            --rust:#B87858;
-            --rust-light:#D4A890;
-            --gold-trim:#C8A960;
-            --machine-bg:#E8DCC6;
-            --machine-border:#C4B898;
-            --shadow:rgba(59,47,47,0.1);
-            --shadow-lg:rgba(59,47,47,0.15);
-        }
-        *{margin:0;padding:0;box-sizing:border-box}
-        html,body{
-            width:100%;height:100%;overflow:hidden;
-            font-family:'DM Sans',sans-serif;
-            background:var(--parchment);color:var(--ink);
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;-webkit-user-select:none;
-        }
-
-        /* Texture */
-        body::before{
-            content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-            background:
-                    radial-gradient(ellipse at 30% 20%,rgba(196,135,142,0.07) 0%,transparent 50%),
-                    radial-gradient(ellipse at 70% 80%,rgba(143,166,138,0.07) 0%,transparent 50%),
-                    radial-gradient(ellipse at 50% 50%,rgba(226,201,126,0.05) 0%,transparent 60%);
-        }
-        body::after{
-            content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.2;
-            background-image:radial-gradient(circle,var(--parchment-deep) 0.6px,transparent 0.6px);
-            background-size:20px 20px;
-        }
-
-        .stitch{
-            position:fixed;inset:8px;
-            border:2px dashed var(--parchment-deep);
-            border-radius:12px;pointer-events:none;z-index:1;opacity:0.4;
-        }
-
-        canvas#sparks{position:fixed;inset:0;pointer-events:none;z-index:999}
-
-        /* ===== START ===== */
-        #startScreen{
-            position:fixed;inset:0;z-index:100;
-            display:flex;flex-direction:column;align-items:center;justify-content:center;
-            padding:40px 24px;
-            background:var(--parchment);
-            transition:opacity 0.6s,transform 0.6s;
-        }
-        #startScreen.hidden{opacity:0;transform:scale(0.95);pointer-events:none}
-
-        .s-icon{font-size:64px;margin-bottom:12px;animation:bob 3s ease-in-out infinite}
-        @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-
-        .s-title{
-            font-family:'Cormorant Garamond',serif;
-            font-size:36px;font-weight:700;font-style:italic;
-            color:var(--ink);margin-bottom:4px;text-align:center;
-        }
-        .s-sub{
-            font-family:'Caveat',cursive;font-size:20px;
-            color:var(--rose);margin-bottom:6px;
-        }
-        .s-name{
-            font-family:'Caveat',cursive;font-size:26px;
-            color:var(--ink-light);margin-bottom:28px;
-        }
-        .s-desc{
-            font-size:13px;color:var(--ink-faded);font-weight:500;
-            text-align:center;line-height:1.8;max-width:280px;margin-bottom:32px;
-        }
-        .s-pills{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
-        .pill{
-            padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;
-        }
-        .pill-r{background:var(--rose-pale);color:var(--rose)}
-        .pill-s{background:rgba(143,166,138,0.2);color:var(--sage)}
-        .pill-b{background:var(--butter-light);color:#9A7830}
-
-        .btn{
-            font-family:'Cormorant Garamond',serif;
-            font-size:16px;font-weight:600;font-style:italic;
-            padding:14px 40px;border:none;border-radius:50px;
-            cursor:pointer;touch-action:manipulation;
-            transition:all 0.2s;letter-spacing:0.5px;
-        }
-        .btn:active{transform:scale(0.96)}
-        .btn-main{
-            background:var(--cream);border:1.5px solid var(--parchment-deep);
-            color:var(--ink);box-shadow:0 2px 12px var(--shadow);
-        }
-
-        /* ===== GAME SCREEN ===== */
-        #gameScreen{
-            position:fixed;inset:0;z-index:10;
-            display:none;flex-direction:column;align-items:center;
-            justify-content:center;padding:24px;gap:0;
-        }
-        #gameScreen.active{display:flex;animation:fadeUp 0.5s ease}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
-        .game-title{
-            font-family:'Caveat',cursive;font-size:18px;
-            color:var(--ink-faded);margin-bottom:12px;font-weight:600;
-        }
-        .spin-count{
-            font-family:'Caveat',cursive;font-size:14px;
-            color:var(--rose);margin-bottom:16px;
-        }
-
-        /* ===== THE MACHINE ===== */
-        .machine{
-            width:100%;max-width:340px;
-            background:var(--cream);
-            border:2px solid var(--machine-border);
-            border-radius:24px;
-            box-shadow:0 8px 32px var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,0.6);
-            overflow:hidden;position:relative;
-        }
-
-        .machine-top{
-            background:linear-gradient(135deg,var(--rose-pale),var(--butter-light));
-            padding:16px 20px 12px;text-align:center;
-            border-bottom:1.5px solid var(--parchment-deep);
-        }
-        .machine-top h2{
-            font-family:'Cormorant Garamond',serif;
-            font-size:22px;font-weight:700;font-style:italic;
-            color:var(--ink);
-        }
-        .machine-top .stars{
-            font-size:12px;color:var(--gold-trim);letter-spacing:4px;
-            margin-top:2px;
-        }
-
-        /* ===== SLOT REELS ===== */
-        .reels-frame{
-            padding:20px 16px;
-            display:flex;gap:8px;justify-content:center;
-            background:var(--warm-white);
-        }
-
-        .reel-container{
-            flex:1;max-width:100px;height:90px;
-            overflow:hidden;position:relative;
-            background:var(--cream);
-            border:1.5px solid var(--parchment-deep);
-            border-radius:14px;
-            box-shadow:inset 0 2px 6px rgba(59,47,47,0.06);
-        }
-
-        /* Fade edges */
-        .reel-container::before,.reel-container::after{
-            content:'';position:absolute;left:0;right:0;height:18px;z-index:2;
-            pointer-events:none;
-        }
-        .reel-container::before{
-            top:0;
-            background:linear-gradient(to bottom,var(--cream),transparent);
-        }
-        .reel-container::after{
-            bottom:0;
-            background:linear-gradient(to top,var(--cream),transparent);
-        }
-
-        .reel{
-            display:flex;flex-direction:column;align-items:center;
-            transition:transform 0.8s cubic-bezier(0.2,0.8,0.3,1);
-            will-change:transform;
-        }
-
-        .reel-item{
-            width:100%;height:90px;
-            display:flex;flex-direction:column;
-            align-items:center;justify-content:center;
-            flex-shrink:0;
-            padding:4px;
-        }
-        .reel-emoji{font-size:32px;margin-bottom:2px}
-        .reel-label{
-            font-family:'Caveat',cursive;
-            font-size:11px;font-weight:600;
-            color:var(--ink-faded);text-align:center;
-            line-height:1.2;
-        }
-
-        /* Center highlight */
-        .reel-highlight{
-            position:absolute;top:50%;left:50%;
-            transform:translate(-50%,-50%);
-            width:calc(100% + 4px);height:92px;
-            border:2px solid var(--butter);
-            border-radius:16px;pointer-events:none;
-            z-index:3;opacity:0;transition:opacity 0.3s;
-        }
-        .reel-highlight.show{opacity:1}
-
-        /* ===== RESULT AREA ===== */
-        .machine-result{
-            padding:0 20px 20px;
-            text-align:center;
-            min-height:100px;
-            display:flex;flex-direction:column;
-            align-items:center;justify-content:center;
-        }
-
-        .result-combo{
-            font-family:'Caveat',cursive;
-            font-size:14px;color:var(--ink-faded);
-            margin-bottom:6px;font-weight:600;
-            letter-spacing:0.5px;opacity:0;
-            transition:opacity 0.4s;
-        }
-        .result-combo.show{opacity:1}
-
-        .result-message{
-            font-family:'Cormorant Garamond',serif;
-            font-size:17px;font-weight:600;font-style:italic;
-            color:var(--ink);line-height:1.6;
-            max-width:280px;
-            opacity:0;transform:translateY(8px);
-            transition:all 0.5s ease;
-        }
-        .result-message.show{opacity:1;transform:translateY(0)}
-
-        .result-tag{
-            font-family:'Caveat',cursive;
-            font-size:13px;color:var(--rose);
-            margin-top:6px;
-            opacity:0;transition:opacity 0.4s 0.2s;
-        }
-        .result-tag.show{opacity:1}
-
-        /* ===== PULL LEVER ===== */
-        .lever-area{
-            padding:8px 20px 20px;display:flex;justify-content:center;
-        }
-
-        .lever-btn{
-            font-family:'Caveat',cursive;
-            font-size:18px;font-weight:700;
-            padding:14px 48px;
-            background:linear-gradient(135deg,var(--rose),var(--berry-light));
-            color:white;border:none;border-radius:50px;
-            cursor:pointer;touch-action:manipulation;
-            box-shadow:0 4px 16px rgba(196,135,142,0.3);
-            transition:all 0.2s;
-            letter-spacing:0.5px;
-        }
-        .lever-btn:active{transform:scale(0.95)}
-        .lever-btn:disabled{
-            opacity:0.5;pointer-events:none;
-        }
-        .lever-btn.glow{
-            animation:leverGlow 1.5s ease-in-out infinite;
-        }
-        @keyframes leverGlow{
-            0%,100%{box-shadow:0 4px 16px rgba(196,135,142,0.3)}
-            50%{box-shadow:0 4px 28px rgba(196,135,142,0.5)}
-        }
-
-        /* ===== HISTORY STRIP ===== */
-        .history{
-            width:100%;max-width:340px;margin-top:16px;
-            max-height:120px;overflow-y:auto;
-            -webkit-overflow-scrolling:touch;
-        }
-        .history::-webkit-scrollbar{display:none}
-
-        .history-item{
-            display:flex;align-items:center;gap:8px;
-            padding:8px 12px;
-            background:rgba(253,248,238,0.6);
-            border-radius:12px;margin-bottom:6px;
-            animation:histSlide 0.3s ease;
-            border:1px solid var(--parchment-dark);
-        }
-        @keyframes histSlide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
-
-        .hist-emojis{font-size:14px;white-space:nowrap}
-        .hist-text{
-            font-size:12px;color:var(--ink-light);
-            font-weight:500;line-height:1.3;
-            flex:1;
-        }
-
-        /* ===== JACKPOT OVERLAY ===== */
-        #jackpotOverlay{
-            position:fixed;inset:0;z-index:500;
-            display:none;align-items:center;justify-content:center;
-            padding:24px;
-        }
-        #jackpotOverlay.active{display:flex;animation:fadeUp 0.5s ease}
-
-        .jackpot-backdrop{
-            position:absolute;inset:0;
-            background:rgba(59,47,47,0.5);
-            backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-        }
-
-        .jackpot-card{
-            position:relative;z-index:2;
-            background:var(--cream);border-radius:24px;
-            padding:32px 24px;max-width:320px;width:100%;
-            text-align:center;
-            box-shadow:0 12px 48px rgba(59,47,47,0.25);
-            border:1.5px solid var(--butter);
-            animation:jackpotPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        @keyframes jackpotPop{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
-
-        .jackpot-card::before{
-            content:'';position:absolute;top:0;left:0;right:0;height:5px;
-            border-radius:24px 24px 0 0;
-            background:linear-gradient(90deg,var(--rose-light),var(--butter),var(--sage-light));
-        }
-        .jp-emoji{font-size:52px;margin-bottom:8px}
-        .jp-title{
-            font-family:'Cormorant Garamond',serif;
-            font-size:26px;font-weight:700;font-style:italic;
-            color:var(--ink);margin-bottom:12px;
-        }
-        .jp-text{
-            font-family:'Cormorant Garamond',serif;
-            font-size:16px;font-style:italic;
-            color:var(--ink-light);line-height:1.8;margin-bottom:16px;
-        }
-        .jp-note{
-            font-family:'Caveat',cursive;
-            font-size:16px;color:var(--rose);margin-bottom:20px;
-        }
-        .jp-close{
-            font-family:'Caveat',cursive;font-size:15px;
-            padding:10px 28px;background:transparent;
-            border:1.5px solid var(--parchment-deep);
-            border-radius:50px;color:var(--ink-faded);
-            cursor:pointer;touch-action:manipulation;
-        }
-        .jp-close:active{background:var(--parchment)}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Love Machine 🎰</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --parchment:#FFF0F3;
+  --parchment-dark:#F5D5DC;
+  --parchment-deep:#E8B8C4;
+  --cream:#FFF8F9;
+  --warm-white:#FFFAFC;
+  --ink:#4A2836;
+  --ink-light:#6B4558;
+  --ink-faded:#A07888;
+  --rose:#D4728A;
+  --rose-light:#F0A8BA;
+  --rose-pale:#FAD4DE;
+  --sage:#C49AAE;
+  --sage-light:#DCC0CC;
+  --butter:#E8A8B8;
+  --butter-light:#F5D0D8;
+  --sky:#D4A8C0;
+  --berry:#8A4060;
+  --berry-light:#C07898;
+  --rust:#C87890;
+  --rust-light:#E0A8B8;
+  --gold-trim:#D4889A;
+  --machine-bg:#F5D5DC;
+  --machine-border:#E0B8C4;
+  --shadow:rgba(74,40,54,0.08);
+  --shadow-lg:rgba(74,40,54,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  font-family:'DM Sans',sans-serif;
+  background:var(--parchment);color:var(--ink);
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* Texture */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 30% 20%,rgba(212,114,138,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 70% 80%,rgba(196,154,174,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(232,168,184,0.06) 0%,transparent 60%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.2;
+  background-image:radial-gradient(circle,var(--parchment-deep) 0.6px,transparent 0.6px);
+  background-size:20px 20px;
+}
+
+.stitch{
+  position:fixed;inset:8px;
+  border:2px dashed var(--parchment-deep);
+  border-radius:12px;pointer-events:none;z-index:1;opacity:0.4;
+}
+
+canvas#sparks{position:fixed;inset:0;pointer-events:none;z-index:999}
+
+/* ===== START ===== */
+#startScreen{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:var(--parchment);
+  transition:opacity 0.6s,transform 0.6s;
+}
+#startScreen.hidden{opacity:0;transform:scale(0.95);pointer-events:none}
+
+.s-icon{font-size:64px;margin-bottom:12px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.s-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:700;font-style:italic;
+  color:var(--ink);margin-bottom:4px;text-align:center;
+}
+.s-sub{
+  font-family:'Caveat',cursive;font-size:20px;
+  color:var(--rose);margin-bottom:6px;
+}
+.s-name{
+  font-family:'Caveat',cursive;font-size:26px;
+  color:var(--ink-light);margin-bottom:28px;
+}
+.s-desc{
+  font-size:13px;color:var(--ink-faded);font-weight:500;
+  text-align:center;line-height:1.8;max-width:280px;margin-bottom:32px;
+}
+.s-pills{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
+.pill{
+  padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;
+}
+.pill-r{background:var(--rose-pale);color:var(--berry)}
+.pill-s{background:rgba(196,154,174,0.25);color:var(--berry)}
+.pill-b{background:var(--butter-light);color:var(--berry)}
+
+.btn{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-weight:600;font-style:italic;
+  padding:14px 40px;border:none;border-radius:50px;
+  cursor:pointer;touch-action:manipulation;
+  transition:all 0.2s;letter-spacing:0.5px;
+}
+.btn:active{transform:scale(0.96)}
+.btn-main{
+  background:var(--cream);border:1.5px solid var(--parchment-deep);
+  color:var(--ink);box-shadow:0 2px 12px var(--shadow);
+}
+
+/* ===== GAME SCREEN ===== */
+#gameScreen{
+  position:fixed;inset:0;z-index:10;
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;padding:24px;gap:0;
+}
+#gameScreen.active{display:flex;animation:fadeUp 0.5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.game-title{
+  font-family:'Caveat',cursive;font-size:18px;
+  color:var(--ink-faded);margin-bottom:12px;font-weight:600;
+}
+.spin-count{
+  font-family:'Caveat',cursive;font-size:14px;
+  color:var(--rose);margin-bottom:16px;
+}
+
+/* ===== THE MACHINE ===== */
+.machine{
+  width:100%;max-width:340px;
+  background:var(--cream);
+  border:2px solid var(--machine-border);
+  border-radius:24px;
+  box-shadow:0 8px 32px var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,0.6);
+  overflow:hidden;position:relative;
+}
+
+.machine-top{
+  background:linear-gradient(135deg,var(--rose-pale),var(--butter-light));
+  padding:16px 20px 12px;text-align:center;
+  border-bottom:1.5px solid var(--parchment-deep);
+}
+.machine-top h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:700;font-style:italic;
+  color:var(--ink);
+}
+.machine-top .stars{
+  font-size:12px;color:var(--gold-trim);letter-spacing:4px;
+  margin-top:2px;
+}
+
+/* ===== SLOT REELS ===== */
+.reels-frame{
+  padding:20px 16px;
+  display:flex;gap:8px;justify-content:center;
+  background:var(--warm-white);
+}
+
+.reel-container{
+  flex:1;max-width:100px;height:90px;
+  overflow:hidden;position:relative;
+  background:var(--cream);
+  border:1.5px solid var(--parchment-deep);
+  border-radius:14px;
+  box-shadow:inset 0 2px 6px rgba(59,47,47,0.06);
+}
+
+/* Fade edges */
+.reel-container::before,.reel-container::after{
+  content:'';position:absolute;left:0;right:0;height:18px;z-index:2;
+  pointer-events:none;
+}
+.reel-container::before{
+  top:0;
+  background:linear-gradient(to bottom,var(--cream),transparent);
+}
+.reel-container::after{
+  bottom:0;
+  background:linear-gradient(to top,var(--cream),transparent);
+}
+
+.reel{
+  display:flex;flex-direction:column;align-items:center;
+  transition:transform 0.8s cubic-bezier(0.2,0.8,0.3,1);
+  will-change:transform;
+}
+
+.reel-item{
+  width:100%;height:90px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  flex-shrink:0;
+  padding:4px;
+}
+.reel-emoji{font-size:32px;margin-bottom:2px}
+.reel-label{
+  font-family:'Caveat',cursive;
+  font-size:11px;font-weight:600;
+  color:var(--ink-faded);text-align:center;
+  line-height:1.2;
+}
+
+/* Center highlight */
+.reel-highlight{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:calc(100% + 4px);height:92px;
+  border:2px solid var(--butter);
+  border-radius:16px;pointer-events:none;
+  z-index:3;opacity:0;transition:opacity 0.3s;
+}
+.reel-highlight.show{opacity:1}
+
+/* ===== RESULT AREA ===== */
+.machine-result{
+  padding:0 20px 20px;
+  text-align:center;
+  min-height:100px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+
+.result-combo{
+  font-family:'Caveat',cursive;
+  font-size:14px;color:var(--ink-faded);
+  margin-bottom:6px;font-weight:600;
+  letter-spacing:0.5px;opacity:0;
+  transition:opacity 0.4s;
+}
+.result-combo.show{opacity:1}
+
+.result-message{
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;font-style:italic;
+  color:var(--ink);line-height:1.6;
+  max-width:280px;
+  opacity:0;transform:translateY(8px);
+  transition:all 0.5s ease;
+}
+.result-message.show{opacity:1;transform:translateY(0)}
+
+.result-tag{
+  font-family:'Caveat',cursive;
+  font-size:13px;color:var(--rose);
+  margin-top:6px;
+  opacity:0;transition:opacity 0.4s 0.2s;
+}
+.result-tag.show{opacity:1}
+
+/* ===== PULL LEVER ===== */
+.lever-area{
+  padding:8px 20px 20px;display:flex;justify-content:center;
+}
+
+.lever-btn{
+  font-family:'Caveat',cursive;
+  font-size:18px;font-weight:700;
+  padding:14px 48px;
+  background:linear-gradient(135deg,var(--rose),var(--berry-light));
+  color:white;border:none;border-radius:50px;
+  cursor:pointer;touch-action:manipulation;
+  box-shadow:0 4px 16px rgba(196,135,142,0.3);
+  transition:all 0.2s;
+  letter-spacing:0.5px;
+}
+.lever-btn:active{transform:scale(0.95)}
+.lever-btn:disabled{
+  opacity:0.5;pointer-events:none;
+}
+.lever-btn.glow{
+  animation:leverGlow 1.5s ease-in-out infinite;
+}
+@keyframes leverGlow{
+  0%,100%{box-shadow:0 4px 16px rgba(212,114,138,0.3)}
+  50%{box-shadow:0 4px 28px rgba(212,114,138,0.5)}
+}
+
+/* ===== HISTORY STRIP ===== */
+.history{
+  width:100%;max-width:340px;margin-top:16px;
+  max-height:120px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.history::-webkit-scrollbar{display:none}
+
+.history-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  background:rgba(255,240,243,0.6);
+  border-radius:12px;margin-bottom:6px;
+  animation:histSlide 0.3s ease;
+  border:1px solid var(--parchment-dark);
+}
+@keyframes histSlide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+
+.hist-emojis{font-size:14px;white-space:nowrap}
+.hist-text{
+  font-size:12px;color:var(--ink-light);
+  font-weight:500;line-height:1.3;
+  flex:1;
+}
+
+/* ===== JACKPOT OVERLAY ===== */
+#jackpotOverlay{
+  position:fixed;inset:0;z-index:500;
+  display:none;align-items:center;justify-content:center;
+  padding:24px;
+}
+#jackpotOverlay.active{display:flex;animation:fadeUp 0.5s ease}
+
+.jackpot-backdrop{
+  position:absolute;inset:0;
+  background:rgba(59,47,47,0.5);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+
+.jackpot-card{
+  position:relative;z-index:2;
+  background:var(--cream);border-radius:24px;
+  padding:32px 24px;max-width:320px;width:100%;
+  text-align:center;
+  box-shadow:0 12px 48px rgba(59,47,47,0.25);
+  border:1.5px solid var(--butter);
+  animation:jackpotPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes jackpotPop{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+.jackpot-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:5px;
+  border-radius:24px 24px 0 0;
+  background:linear-gradient(90deg,var(--rose-light),var(--butter),var(--rose-pale));
+}
+.jp-emoji{font-size:52px;margin-bottom:8px}
+.jp-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:700;font-style:italic;
+  color:var(--ink);margin-bottom:12px;
+}
+.jp-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-style:italic;
+  color:var(--ink-light);line-height:1.8;margin-bottom:16px;
+}
+.jp-note{
+  font-family:'Caveat',cursive;
+  font-size:16px;color:var(--rose);margin-bottom:20px;
+}
+.jp-close{
+  font-family:'Caveat',cursive;font-size:15px;
+  padding:10px 28px;background:transparent;
+  border:1.5px solid var(--parchment-deep);
+  border-radius:50px;color:var(--ink-faded);
+  cursor:pointer;touch-action:manipulation;
+}
+.jp-close:active{background:var(--parchment)}
+
+/* ===== COUNTDOWN ===== */
+.countdown-wrapper{
+  margin-bottom:24px;text-align:center;
+}
+.countdown-label{
+  font-family:'Caveat',cursive;
+  font-size:16px;color:var(--rose);
+  margin-bottom:10px;font-weight:600;
+}
+.countdown-boxes{
+  display:flex;gap:8px;justify-content:center;
+}
+.cd-box{
+  background:var(--warm-white);
+  border:1.5px solid var(--parchment-deep);
+  border-radius:14px;padding:10px 6px;
+  min-width:58px;
+  box-shadow:0 2px 8px var(--shadow);
+  text-align:center;
+}
+.cd-num{
+  font-family:'DM Sans',sans-serif;
+  font-size:24px;font-weight:800;
+  color:var(--berry);
+  line-height:1;margin-bottom:2px;
+}
+.cd-unit{
+  font-family:'Caveat',cursive;
+  font-size:11px;color:var(--ink-faded);
+  font-weight:600;letter-spacing:0.5px;
+}
+.countdown-date{
+  font-size:11px;color:var(--ink-faded);
+  margin-top:8px;font-weight:500;
+  letter-spacing:0.5px;
+}
+.countdown-date span{
+  color:var(--rose);font-weight:700;
+}
+</style>
 </head>
 <body>
 
@@ -1412,480 +412,523 @@
 
 <!-- ===== START ===== -->
 <div id="startScreen">
-    <div class="s-icon">🎰</div>
-    <div class="s-title">The Love Machine</div>
-    <div class="s-sub">every spin wins ✨</div>
-    <div class="s-name">~ for Tamtam ~</div>
-    <div class="s-pills">
-        <span class="pill pill-r">Compliments</span>
-        <span class="pill pill-s">Date ideas</span>
-        <span class="pill pill-b">Sweet nothings</span>
+  <div class="s-icon">🎰</div>
+  <div class="s-title">Our Little Love Game</div>
+  <div class="s-sub">every spin you win because I already did</div>
+  <div class="s-name">~ made with love for my Tamtam ~</div>
+
+  <div class="countdown-wrapper">
+    <div class="countdown-label">💒 Counting down to forever...</div>
+    <div class="countdown-boxes">
+      <div class="cd-box"><div class="cd-num" id="cdDays">--</div><div class="cd-unit">days</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdHours">--</div><div class="cd-unit">hours</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdMins">--</div><div class="cd-unit">mins</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdSecs">--</div><div class="cd-unit">secs</div></div>
     </div>
-    <div class="s-desc">Pull the lever — the first slot picks a setting, which narrows the second slot, which narrows the third. Every combo makes perfect sense. And you can't lose.</div>
-    <button class="btn btn-main" onclick="startGame()">Pull the Lever</button>
+    <div class="countdown-date">March 24, 2026 · <span>Our Wedding Day</span> 💕</div>
+  </div>
+
+  <div class="s-pills">
+    <span class="pill pill-r">Compliments</span>
+    <span class="pill pill-s">Date ideas</span>
+    <span class="pill pill-b">Sweet nothings</span>
+  </div>
+  <div class="s-desc">Pull the lever — the first slot picks a setting, which narrows the second slot, which narrows the third. Every combo makes perfect sense. And you can't lose.</div>
+  <button class="btn btn-main" onclick="startGame()">Pull the Lever</button>
 </div>
 
 <!-- ===== GAME ===== -->
 <div id="gameScreen">
-    <div class="game-title">✦ The Love Machine ✦</div>
-    <div class="spin-count" id="spinCount">Spin #1</div>
+  <div class="game-title">✦ Our Little Love Game ✦</div>
+  <div class="spin-count" id="spinCount">Spin #1</div>
 
-    <div class="machine">
-        <div class="machine-top">
-            <h2>Every Spin Wins</h2>
-            <div class="stars">Setting → Activity → Touch ✦</div>
-        </div>
-
-        <div class="reels-frame">
-            <div class="reel-container">
-                <div class="reel" id="reel0"></div>
-                <div class="reel-highlight" id="hl0"></div>
-            </div>
-            <div class="reel-container">
-                <div class="reel" id="reel1"></div>
-                <div class="reel-highlight" id="hl1"></div>
-            </div>
-            <div class="reel-container">
-                <div class="reel" id="reel2"></div>
-                <div class="reel-highlight" id="hl2"></div>
-            </div>
-        </div>
-
-        <div class="machine-result">
-            <div class="result-combo" id="resultCombo"></div>
-            <div class="result-message" id="resultMsg"></div>
-            <div class="result-tag" id="resultTag"></div>
-        </div>
-
-        <div class="lever-area">
-            <button class="lever-btn glow" id="leverBtn" onclick="spin()">🎰 Pull!</button>
-        </div>
+  <div class="machine">
+    <div class="machine-top">
+      <h2>Every Spin Wins</h2>
+      <div class="stars">Setting → Activity → Touch ✦</div>
     </div>
 
-    <div class="history" id="history"></div>
+    <div class="reels-frame">
+      <div class="reel-container">
+        <div class="reel" id="reel0"></div>
+        <div class="reel-highlight" id="hl0"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="reel1"></div>
+        <div class="reel-highlight" id="hl1"></div>
+      </div>
+      <div class="reel-container">
+        <div class="reel" id="reel2"></div>
+        <div class="reel-highlight" id="hl2"></div>
+      </div>
+    </div>
+
+    <div class="machine-result">
+      <div class="result-combo" id="resultCombo"></div>
+      <div class="result-message" id="resultMsg"></div>
+      <div class="result-tag" id="resultTag"></div>
+    </div>
+
+    <div class="lever-area">
+      <button class="lever-btn glow" id="leverBtn" onclick="spin()">🎰 Pull!</button>
+    </div>
+  </div>
+
+  <div class="history" id="history"></div>
 </div>
 
 <!-- ===== JACKPOT ===== -->
 <div id="jackpotOverlay">
-    <div class="jackpot-backdrop" onclick="closeJackpot()"></div>
-    <div class="jackpot-card">
-        <div class="jp-emoji" id="jpEmoji"></div>
-        <div class="jp-title" id="jpTitle"></div>
-        <div class="jp-text" id="jpText"></div>
-        <div class="jp-note" id="jpNote"></div>
-        <button class="jp-close" onclick="closeJackpot()">keep spinning ✦</button>
-    </div>
+  <div class="jackpot-backdrop" onclick="closeJackpot()"></div>
+  <div class="jackpot-card">
+    <div class="jp-emoji" id="jpEmoji"></div>
+    <div class="jp-title" id="jpTitle"></div>
+    <div class="jp-text" id="jpText"></div>
+    <div class="jp-note" id="jpNote"></div>
+    <button class="jp-close" onclick="closeJackpot()">keep spinning ✦</button>
+  </div>
 </div>
 
 <script>
-    // ============ CASCADING SLOT DATA ============
-    // Reel 1: The Setting (independent)
-    // Reel 2: The Activity (narrowed by Reel 1)
-    // Reel 3: The Finishing Touch (narrowed by Reel 2)
+// ============ CASCADING SLOT DATA ============
+// Reel 1: The Setting (independent)
+// Reel 2: The Activity (narrowed by Reel 1)
+// Reel 3: The Finishing Touch (narrowed by Reel 2)
 
-    const SETTINGS = [
-        {id:'cozy',    emoji:'🏡', label:'Stay home'},
-        {id:'night',   emoji:'🌙', label:'Late night'},
-        {id:'morning', emoji:'🌅', label:'Morning'},
-        {id:'rainy',   emoji:'🌧️', label:'Rainy day'},
-        {id:'adventure',emoji:'🚗', label:'Road trip'},
-        {id:'fancy',   emoji:'✨', label:'Date night'},
-        {id:'outdoors',emoji:'🌻', label:'Outdoors'},
-        {id:'lazy',    emoji:'☁️', label:'Lazy Sunday'},
-    ];
+const SETTINGS = [
+  {id:'cozy',    emoji:'🏡', label:'Stay home'},
+  {id:'night',   emoji:'🌙', label:'Late night'},
+  {id:'morning', emoji:'🌅', label:'Morning'},
+  {id:'rainy',   emoji:'🌧️', label:'Rainy day'},
+  {id:'adventure',emoji:'🚗', label:'Road trip'},
+  {id:'fancy',   emoji:'✨', label:'Date night'},
+  {id:'outdoors',emoji:'🌻', label:'Outdoors'},
+  {id:'lazy',    emoji:'☁️', label:'Lazy Sunday'},
+];
 
-    // Reel 2: activities that fit each setting
-    const ACTIVITIES = {
-        cozy: [
-            {id:'cook',   emoji:'👩‍🍳', label:'Cooking'},
-            {id:'movie',  emoji:'🎬', label:'Movie marathon'},
-            {id:'cuddle', emoji:'🤗', label:'Cuddle session'},
-            {id:'bake',   emoji:'🧁', label:'Baking together'},
-        ],
-        night: [
-            {id:'talk',   emoji:'💬', label:'Deep talks'},
-            {id:'stars',  emoji:'🌟', label:'Stargazing'},
-            {id:'music',  emoji:'🎵', label:'Music & vibes'},
-            {id:'drive',  emoji:'🚘', label:'Night drive'},
-        ],
-        morning: [
-            {id:'coffee', emoji:'☕', label:'Coffee in bed'},
-            {id:'walk',   emoji:'🚶', label:'Morning walk'},
-            {id:'cook',   emoji:'🥞', label:'Making breakfast'},
-            {id:'stretch',emoji:'🧘', label:'Stretching together'},
-        ],
-        rainy: [
-            {id:'cuddle', emoji:'🤗', label:'Cuddles'},
-            {id:'read',   emoji:'📖', label:'Reading together'},
-            {id:'game',   emoji:'🎮', label:'Gaming together'},
-            {id:'bake',   emoji:'🧁', label:'Baking something warm'},
-        ],
-        adventure: [
-            {id:'explore',emoji:'🗺️', label:'Exploring new places'},
-            {id:'food',   emoji:'🍜', label:'Trying street food'},
-            {id:'photo',  emoji:'📸', label:'Taking cute photos'},
-            {id:'sing',   emoji:'🎤', label:'Car karaoke'},
-        ],
-        fancy: [
-            {id:'dinner', emoji:'🍝', label:'Fancy dinner'},
-            {id:'dance',  emoji:'💃', label:'Slow dancing'},
-            {id:'dress',  emoji:'👗', label:'Dressing up'},
-            {id:'sunset', emoji:'🌇', label:'Watching sunset'},
-        ],
-        outdoors: [
-            {id:'picnic', emoji:'🧺', label:'Having a picnic'},
-            {id:'walk',   emoji:'🚶', label:'Long walk'},
-            {id:'bike',   emoji:'🚲', label:'Cycling together'},
-            {id:'photo',  emoji:'📸', label:'Nature photoshoot'},
-        ],
-        lazy: [
-            {id:'nap',    emoji:'😴', label:'Napping together'},
-            {id:'scroll', emoji:'📱', label:'Showing each other reels'},
-            {id:'snack',  emoji:'🍕', label:'Ordering takeout'},
-            {id:'movie',  emoji:'🎬', label:'Rewatching our show'},
-        ],
-    };
+// Reel 2: activities that fit each setting
+const ACTIVITIES = {
+  cozy: [
+    {id:'cook',   emoji:'👩‍🍳', label:'Cooking'},
+    {id:'movie',  emoji:'🎬', label:'Movie marathon'},
+    {id:'cuddle', emoji:'🤗', label:'Cuddle session'},
+    {id:'bake',   emoji:'🧁', label:'Baking together'},
+  ],
+  night: [
+    {id:'talk',   emoji:'💬', label:'Deep talks'},
+    {id:'stars',  emoji:'🌟', label:'Stargazing'},
+    {id:'music',  emoji:'🎵', label:'Music & vibes'},
+    {id:'drive',  emoji:'🚘', label:'Night drive'},
+  ],
+  morning: [
+    {id:'coffee', emoji:'☕', label:'Coffee in bed'},
+    {id:'walk',   emoji:'🚶', label:'Morning walk'},
+    {id:'cook',   emoji:'🥞', label:'Making breakfast'},
+    {id:'stretch',emoji:'🧘', label:'Stretching together'},
+  ],
+  rainy: [
+    {id:'cuddle', emoji:'🤗', label:'Cuddles'},
+    {id:'read',   emoji:'📖', label:'Reading together'},
+    {id:'game',   emoji:'🎮', label:'Gaming together'},
+    {id:'bake',   emoji:'🧁', label:'Baking something warm'},
+  ],
+  adventure: [
+    {id:'explore',emoji:'🗺️', label:'Exploring new places'},
+    {id:'food',   emoji:'🍜', label:'Trying street food'},
+    {id:'photo',  emoji:'📸', label:'Taking cute photos'},
+    {id:'sing',   emoji:'🎤', label:'Car karaoke'},
+  ],
+  fancy: [
+    {id:'dinner', emoji:'🍝', label:'Fancy dinner'},
+    {id:'dance',  emoji:'💃', label:'Slow dancing'},
+    {id:'dress',  emoji:'👗', label:'Dressing up'},
+    {id:'sunset', emoji:'🌇', label:'Watching sunset'},
+  ],
+  outdoors: [
+    {id:'picnic', emoji:'🧺', label:'Having a picnic'},
+    {id:'walk',   emoji:'🚶', label:'Long walk'},
+    {id:'bike',   emoji:'🚲', label:'Cycling together'},
+    {id:'photo',  emoji:'📸', label:'Nature photoshoot'},
+  ],
+  lazy: [
+    {id:'nap',    emoji:'😴', label:'Napping together'},
+    {id:'scroll', emoji:'📱', label:'Showing each other reels'},
+    {id:'snack',  emoji:'🍕', label:'Ordering takeout'},
+    {id:'movie',  emoji:'🎬', label:'Rewatching our show'},
+  ],
+};
 
-    // Reel 3: finishing touches that fit each activity
-    const FINISHERS = {
-        cook:   [{emoji:'🍫',label:'+ Chocolate dessert'},{emoji:'🎶',label:'With our playlist'},{emoji:'🥰',label:'+ Stolen kisses'}],
-        movie:  [{emoji:'🍿',label:'+ Popcorn'},{emoji:'🧸',label:'Under a blanket'},{emoji:'🤍',label:'Heads on shoulders'}],
-        cuddle: [{emoji:'🧸',label:'With fuzzy blankets'},{emoji:'🎶',label:'Lo-fi playing'},{emoji:'💕',label:'Whispered I love yous'}],
-        bake:   [{emoji:'🍪',label:'Cookies from scratch'},{emoji:'😂',label:'Making a mess'},{emoji:'🤍',label:'Feeding each other'}],
-        talk:   [{emoji:'🕯️',label:'By candlelight'},{emoji:'🌌',label:'Under the stars'},{emoji:'💕',label:'Holding hands'}],
-        stars:  [{emoji:'🧸',label:'On a cozy blanket'},{emoji:'🤍',label:'Making wishes'},{emoji:'☕',label:'With warm drinks'}],
-        music:  [{emoji:'💃',label:'Slow dancing'},{emoji:'🎧',label:'Sharing earbuds'},{emoji:'🕯️',label:'Fairy lights on'}],
-        drive:  [{emoji:'🎶',label:'Windows down, music up'},{emoji:'🍦',label:'Getting late-night snacks'},{emoji:'🌉',label:'City lights tour'}],
-        coffee: [{emoji:'🥐',label:'With croissants'},{emoji:'🤗',label:'Still half asleep'},{emoji:'💬',label:'Planning our day'}],
-        walk:   [{emoji:'📸',label:'Taking silly photos'},{emoji:'☕',label:'Stopping for coffee'},{emoji:'🤝',label:'Hand in hand'}],
-        stretch:[{emoji:'☀️',label:'In the sunshine'},{emoji:'🎶',label:'With calm music'},{emoji:'😌',label:'Then back to bed'}],
-        read:   [{emoji:'☕',label:'With hot chocolate'},{emoji:'🧸',label:'Feet tangled up'},{emoji:'🌧️',label:'Rain on the window'}],
-        game:   [{emoji:'😂',label:'Loser makes dinner'},{emoji:'🍕',label:'Snacks everywhere'},{emoji:'🤗',label:'Winner gets kisses'}],
-        explore:[{emoji:'📸',label:'Documenting everything'},{emoji:'🍦',label:'Ice cream stops'},{emoji:'💕',label:'Getting lost together'}],
-        food:   [{emoji:'🤤',label:'Trying everything'},{emoji:'📸',label:'Food photos first!'},{emoji:'🤍',label:'Sharing every bite'}],
-        photo:  [{emoji:'💕',label:'Cheesy poses only'},{emoji:'🌅',label:'Golden hour vibes'},{emoji:'😂',label:'Ugly photos too'}],
-        sing:   [{emoji:'😂',label:'Terribly but loudly'},{emoji:'🎶',label:'Our love songs'},{emoji:'🤍',label:'Duets only'}],
-        dinner: [{emoji:'🕯️',label:'Candlelit'},{emoji:'🍷',label:'Something fancy'},{emoji:'💕',label:'Eyes on each other'}],
-        dance:  [{emoji:'🎶',label:'To our song'},{emoji:'🕯️',label:'In the kitchen'},{emoji:'🤍',label:'Foreheads touching'}],
-        dress:  [{emoji:'📸',label:'Mini photoshoot'},{emoji:'💐',label:'Flowers for you'},{emoji:'✨',label:'Feeling like royalty'}],
-        sunset: [{emoji:'📸',label:'Golden hour selfies'},{emoji:'🤍',label:'Quiet moment together'},{emoji:'🥂',label:'With something bubbly'}],
-        picnic: [{emoji:'🍓',label:'Strawberries & fruit'},{emoji:'📖',label:'Reading out loud'},{emoji:'💕',label:'Laying in the grass'}],
-        bike:   [{emoji:'🍦',label:'Ice cream reward'},{emoji:'📸',label:'Scenic photo stops'},{emoji:'😂',label:'Racing each other'}],
-        nap:    [{emoji:'🧸',label:'Tangled together'},{emoji:'🌧️',label:'Rain sounds'},{emoji:'😴',label:'Alarm OFF'}],
-        scroll: [{emoji:'😂',label:'Crying laughing'},{emoji:'🤗',label:'Leaning on each other'},{emoji:'📱',label:'Sending memes after'}],
-        snack:  [{emoji:'🎬',label:'While watching trash TV'},{emoji:'🤤',label:'Way too much food'},{emoji:'🤍',label:'Eating from same plate'}],
-    };
+// Reel 3: finishing touches that fit each activity
+const FINISHERS = {
+  cook:   [{emoji:'🍫',label:'+ Chocolate dessert'},{emoji:'🎶',label:'With our playlist'},{emoji:'🥰',label:'+ Stolen kisses'}],
+  movie:  [{emoji:'🍿',label:'+ Popcorn'},{emoji:'🧸',label:'Under a blanket'},{emoji:'🤍',label:'Heads on shoulders'}],
+  cuddle: [{emoji:'🧸',label:'With fuzzy blankets'},{emoji:'🎶',label:'Lo-fi playing'},{emoji:'💕',label:'Whispered I love yous'}],
+  bake:   [{emoji:'🍪',label:'Cookies from scratch'},{emoji:'😂',label:'Making a mess'},{emoji:'🤍',label:'Feeding each other'}],
+  talk:   [{emoji:'🕯️',label:'By candlelight'},{emoji:'🌌',label:'Under the stars'},{emoji:'💕',label:'Holding hands'}],
+  stars:  [{emoji:'🧸',label:'On a cozy blanket'},{emoji:'🤍',label:'Making wishes'},{emoji:'☕',label:'With warm drinks'}],
+  music:  [{emoji:'💃',label:'Slow dancing'},{emoji:'🎧',label:'Sharing earbuds'},{emoji:'🕯️',label:'Fairy lights on'}],
+  drive:  [{emoji:'🎶',label:'Windows down, music up'},{emoji:'🍦',label:'Getting late-night snacks'},{emoji:'🌉',label:'City lights tour'}],
+  coffee: [{emoji:'🥐',label:'With croissants'},{emoji:'🤗',label:'Still half asleep'},{emoji:'💬',label:'Planning our day'}],
+  walk:   [{emoji:'📸',label:'Taking silly photos'},{emoji:'☕',label:'Stopping for coffee'},{emoji:'🤝',label:'Hand in hand'}],
+  stretch:[{emoji:'☀️',label:'In the sunshine'},{emoji:'🎶',label:'With calm music'},{emoji:'😌',label:'Then back to bed'}],
+  read:   [{emoji:'☕',label:'With hot chocolate'},{emoji:'🧸',label:'Feet tangled up'},{emoji:'🌧️',label:'Rain on the window'}],
+  game:   [{emoji:'😂',label:'Loser makes dinner'},{emoji:'🍕',label:'Snacks everywhere'},{emoji:'🤗',label:'Winner gets kisses'}],
+  explore:[{emoji:'📸',label:'Documenting everything'},{emoji:'🍦',label:'Ice cream stops'},{emoji:'💕',label:'Getting lost together'}],
+  food:   [{emoji:'🤤',label:'Trying everything'},{emoji:'📸',label:'Food photos first!'},{emoji:'🤍',label:'Sharing every bite'}],
+  photo:  [{emoji:'💕',label:'Cheesy poses only'},{emoji:'🌅',label:'Golden hour vibes'},{emoji:'😂',label:'Ugly photos too'}],
+  sing:   [{emoji:'😂',label:'Terribly but loudly'},{emoji:'🎶',label:'Our love songs'},{emoji:'🤍',label:'Duets only'}],
+  dinner: [{emoji:'🕯️',label:'Candlelit'},{emoji:'🍷',label:'Something fancy'},{emoji:'💕',label:'Eyes on each other'}],
+  dance:  [{emoji:'🎶',label:'To our song'},{emoji:'🕯️',label:'In the kitchen'},{emoji:'🤍',label:'Foreheads touching'}],
+  dress:  [{emoji:'📸',label:'Mini photoshoot'},{emoji:'💐',label:'Flowers for you'},{emoji:'✨',label:'Feeling like royalty'}],
+  sunset: [{emoji:'📸',label:'Golden hour selfies'},{emoji:'🤍',label:'Quiet moment together'},{emoji:'🥂',label:'With something bubbly'}],
+  picnic: [{emoji:'🍓',label:'Strawberries & fruit'},{emoji:'📖',label:'Reading out loud'},{emoji:'💕',label:'Laying in the grass'}],
+  bike:   [{emoji:'🍦',label:'Ice cream reward'},{emoji:'📸',label:'Scenic photo stops'},{emoji:'😂',label:'Racing each other'}],
+  nap:    [{emoji:'🧸',label:'Tangled together'},{emoji:'🌧️',label:'Rain sounds'},{emoji:'😴',label:'Alarm OFF'}],
+  scroll: [{emoji:'😂',label:'Crying laughing'},{emoji:'🤗',label:'Leaning on each other'},{emoji:'📱',label:'Sending memes after'}],
+  snack:  [{emoji:'🎬',label:'While watching trash TV'},{emoji:'🤤',label:'Way too much food'},{emoji:'🤍',label:'Eating from same plate'}],
+};
 
-    // Tailored messages for each setting
-    const SETTING_MESSAGES = {
-        cozy: [
-            {text:"The coziest plan ever made. I just want to be home with you.", tag:'Homebody goals 🏡'},
-            {text:"Who needs the world when we have this?", tag:'Stay-in date: activated ✓'},
-            {text:"This is literally my dream evening with you.", tag:'Introvert paradise 🤍'},
-        ],
-        night: [
-            {text:"Late nights with you hit different. The world goes quiet and it's just us.", tag:'Our hours: after midnight 🌙'},
-            {text:"Nobody does late nights better than we do.", tag:'Night owls in love'},
-            {text:"The best conversations happen when the rest of the world is sleeping.", tag:'2am energy ✨'},
-        ],
-        morning: [
-            {text:"Mornings are only worth waking up for if you're there.", tag:'Not a morning person, but for you? ☀️'},
-            {text:"Starting the day together makes everything else better.", tag:'The softest mornings'},
-            {text:"Give me this every morning and I'll never complain about waking up.", tag:'My alarm can stay 😌'},
-        ],
-        rainy: [
-            {text:"Rainy days were made for us. No excuse needed to stay close.", tag:'Rain = permission to be cozy 🌧️'},
-            {text:"The sound of rain + you = the safest feeling in the world.", tag:'Our kind of weather'},
-            {text:"I actually look forward to rainy days now. Wonder why.", tag:'Because of you, obviously 💕'},
-        ],
-        adventure: [
-            {text:"Let's go somewhere we've never been and make it ours.", tag:'Adventure loading... 🗺️'},
-            {text:"The destination doesn't matter when the company is this good.", tag:'You\'re my favorite place'},
-            {text:"New places, same butterflies when I look at you.", tag:'Wanderlust for two ✨'},
-        ],
-        fancy: [
-            {text:"Sometimes we deserve a night that feels like a movie scene.", tag:'Main characters only 🎬'},
-            {text:"You + dressed up + this plan = I'm not surviving.", tag:'Heart eyes activated 😍'},
-            {text:"Fancy with you doesn't need to be expensive. Just intentional.", tag:'Effort is the love language 🤍'},
-        ],
-        outdoors: [
-            {text:"Fresh air and you — the only therapy I'll ever need.", tag:'Nature date booked 🌿'},
-            {text:"Everything is more beautiful outside. Especially you.", tag:'Smooth? Always. 😌'},
-            {text:"Let's leave our phones and just be present together.", tag:'Touch grass, together 🌻'},
-        ],
-        lazy: [
-            {text:"Doing absolutely nothing with you is still my favorite plan.", tag:'Zero productivity, maximum love ☁️'},
-            {text:"We don't need to do something big to have a good day.", tag:'The small things are the big things'},
-            {text:"This level of lazy should be illegal. Let's do it anyway.", tag:'Guilty as charged 😴'},
-        ],
-    };
+// Tailored messages for each setting
+const SETTING_MESSAGES = {
+  cozy: [
+    {text:"The coziest plan ever made. I just want to be home with you.", tag:'Homebody goals 🏡'},
+    {text:"Who needs the world when we have this?", tag:'Stay-in date: activated ✓'},
+    {text:"This is literally my dream evening with you.", tag:'Introvert paradise 🤍'},
+  ],
+  night: [
+    {text:"Late nights with you hit different. The world goes quiet and it's just us.", tag:'Our hours: after midnight 🌙'},
+    {text:"Nobody does late nights better than we do.", tag:'Night owls in love'},
+    {text:"The best conversations happen when the rest of the world is sleeping.", tag:'2am energy ✨'},
+  ],
+  morning: [
+    {text:"Mornings are only worth waking up for if you're there.", tag:'Not a morning person, but for you? ☀️'},
+    {text:"Starting the day together makes everything else better.", tag:'The softest mornings'},
+    {text:"Give me this every morning and I'll never complain about waking up.", tag:'My alarm can stay 😌'},
+  ],
+  rainy: [
+    {text:"Rainy days were made for us. No excuse needed to stay close.", tag:'Rain = permission to be cozy 🌧️'},
+    {text:"The sound of rain + you = the safest feeling in the world.", tag:'Our kind of weather'},
+    {text:"I actually look forward to rainy days now. Wonder why.", tag:'Because of you, obviously 💕'},
+  ],
+  adventure: [
+    {text:"Let's go somewhere we've never been and make it ours.", tag:'Adventure loading... 🗺️'},
+    {text:"The destination doesn't matter when the company is this good.", tag:'You're my favorite place'},
+    {text:"New places, same butterflies when I look at you.", tag:'Wanderlust for two ✨'},
+  ],
+  fancy: [
+    {text:"Sometimes we deserve a night that feels like a movie scene.", tag:'Main characters only 🎬'},
+    {text:"You + dressed up + this plan = I'm not surviving.", tag:'Heart eyes activated 😍'},
+    {text:"Fancy with you doesn't need to be expensive. Just intentional.", tag:'Effort is the love language 🤍'},
+  ],
+  outdoors: [
+    {text:"Fresh air and you — the only therapy I'll ever need.", tag:'Nature date booked 🌿'},
+    {text:"Everything is more beautiful outside. Especially you.", tag:'Smooth? Always. 😌'},
+    {text:"Let's leave our phones and just be present together.", tag:'Touch grass, together 🌻'},
+  ],
+  lazy: [
+    {text:"Doing absolutely nothing with you is still my favorite plan.", tag:'Zero productivity, maximum love ☁️'},
+    {text:"We don't need to do something big to have a good day.", tag:'The small things are the big things'},
+    {text:"This level of lazy should be illegal. Let's do it anyway.", tag:'Guilty as charged 😴'},
+  ],
+};
 
-    // Special jackpots
-    const JACKPOTS = [
-        {emoji:'💕💕💕', title:'LOVE JACKPOT!', text:'The machine is telling us what we already know — this love is the real deal.', note:'You hit the jackpot the day I met you 🤍'},
-        {emoji:'✨✨✨', title:'MAGIC COMBO!', text:'Everything we do together turns into something magical. That\'s our superpower.', note:'You are the magic, Tamtam ✨'},
-        {emoji:'🎉🎉🎉', title:'CELEBRATION!', text:'Every moment with you is worth celebrating — even the quiet ones.', note:'Every day with you is a holiday 🎊'},
-    ];
+// Special jackpots
+const JACKPOTS = [
+  {emoji:'💕💕💕', title:'LOVE JACKPOT!', text:'The machine is telling us what we already know — this love is the real deal.', note:'You hit the jackpot the day I met you 🤍'},
+  {emoji:'✨✨✨', title:'MAGIC COMBO!', text:'Everything we do together turns into something magical. That\'s our superpower.', note:'You are the magic, Tamtam ✨'},
+  {emoji:'🎉🎉🎉', title:'CELEBRATION!', text:'Every moment with you is worth celebrating — even the quiet ones.', note:'Every day with you is a holiday 🎊'},
+];
 
-    // ============ STATE ============
-    let spinning = false;
-    let spinNum = 0;
-    // Current active items for each reel (rebuilt each spin)
-    let activeReel1 = [];
-    let activeReel2 = [];
-    let activeReel3 = [];
-    let chosenSetting = null;
-    let chosenActivity = null;
-    let chosenFinisher = null;
+// ============ STATE ============
+let spinning = false;
+let spinNum = 0;
+// Current active items for each reel (rebuilt each spin)
+let activeReel1 = [];
+let activeReel2 = [];
+let activeReel3 = [];
+let chosenSetting = null;
+let chosenActivity = null;
+let chosenFinisher = null;
 
-    // ============ PARTICLES ============
-    const sCanvas = document.getElementById('sparks');
-    const sCtx = sCanvas.getContext('2d');
-    let parts = [];
+// ============ PARTICLES ============
+const sCanvas = document.getElementById('sparks');
+const sCtx = sCanvas.getContext('2d');
+let parts = [];
 
-    function resizeC(){sCanvas.width=innerWidth;sCanvas.height=innerHeight}
-    resizeC();
-    addEventListener('resize',resizeC);
+function resizeC(){sCanvas.width=innerWidth;sCanvas.height=innerHeight}
+resizeC();
+addEventListener('resize',resizeC);
 
-    function spawnSparks(x,y,count=10){
-        const cols=['#C4878E','#8FA68A','#E2C97E','#A8B8C8','#B88FA4','#D4A890'];
-        for(let i=0;i<count;i++){
-            const a=(i/count)*Math.PI*2+Math.random()*0.5;
-            const sp=1.5+Math.random()*3;
-            parts.push({
-                x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.5,
-                size:3+Math.random()*4,life:1,
-                decay:0.015+Math.random()*0.01,
-                color:cols[Math.floor(Math.random()*cols.length)],
-            });
-        }
+function spawnSparks(x,y,count=10){
+  const cols=['#D4728A','#E8A8B8','#F0A8BA','#C49AAE','#C07898','#FAD4DE'];
+  for(let i=0;i<count;i++){
+    const a=(i/count)*Math.PI*2+Math.random()*0.5;
+    const sp=1.5+Math.random()*3;
+    parts.push({
+      x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.5,
+      size:3+Math.random()*4,life:1,
+      decay:0.015+Math.random()*0.01,
+      color:cols[Math.floor(Math.random()*cols.length)],
+    });
+  }
+}
+function spawnBigCelebration(){
+  for(let i=0;i<40;i++){
+    setTimeout(()=>spawnSparks(
+      sCanvas.width*(0.2+Math.random()*0.6),
+      sCanvas.height*(0.2+Math.random()*0.5),5
+    ),i*40);
+  }
+}
+
+function animP(){
+  sCtx.clearRect(0,0,sCanvas.width,sCanvas.height);
+  for(let i=parts.length-1;i>=0;i--){
+    const p=parts[i];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.vx*=0.99;
+    p.life-=p.decay;
+    if(p.life<=0){parts.splice(i,1);continue}
+    sCtx.globalAlpha=p.life*0.8;
+    sCtx.fillStyle=p.color;
+    sCtx.beginPath();
+    sCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    sCtx.fill();
+    sCtx.globalAlpha=p.life*0.25;
+    sCtx.fillStyle='#fff';
+    sCtx.beginPath();
+    sCtx.arc(p.x,p.y,p.size*0.35,0,Math.PI*2);
+    sCtx.fill();
+  }
+  sCtx.globalAlpha=1;
+  requestAnimationFrame(animP);
+}
+animP();
+
+// ============ BUILD A SINGLE REEL ============
+function buildReel(reelEl, items){
+  reelEl.innerHTML='';
+  const copies = 5;
+  for(let c=0;c<copies;c++){
+    items.forEach(item=>{
+      const el=document.createElement('div');
+      el.className='reel-item';
+      el.innerHTML=`<div class="reel-emoji">${item.emoji}</div><div class="reel-label">${item.label}</div>`;
+      reelEl.appendChild(el);
+    });
+  }
+}
+
+function buildReels(){
+  // Initial build with all settings for reel 1, placeholder for 2 & 3
+  activeReel1 = [...SETTINGS];
+  // Use the first setting's activities as initial display
+  activeReel2 = ACTIVITIES[SETTINGS[0].id];
+  activeReel3 = FINISHERS[activeReel2[0].id];
+
+  buildReel(document.getElementById('reel0'), activeReel1);
+  buildReel(document.getElementById('reel1'), activeReel2);
+  buildReel(document.getElementById('reel2'), activeReel3);
+}
+
+// ============ CASCADING SPIN ============
+function spin(){
+  if(spinning) return;
+  spinning = true;
+  spinNum++;
+  document.getElementById('spinCount').textContent = `Spin #${spinNum}`;
+
+  const btn = document.getElementById('leverBtn');
+  btn.disabled = true;
+  btn.classList.remove('glow');
+  btn.textContent = '🎰 Spinning...';
+
+  // Hide previous results
+  document.getElementById('resultCombo').classList.remove('show');
+  document.getElementById('resultMsg').classList.remove('show');
+  document.getElementById('resultTag').classList.remove('show');
+  ['hl0','hl1','hl2'].forEach(id=>document.getElementById(id).classList.remove('show'));
+
+  const itemH = 90;
+
+  // === REEL 1: Pick setting ===
+  const settingIdx = Math.floor(Math.random() * SETTINGS.length);
+  chosenSetting = SETTINGS[settingIdx];
+
+  // Build & spin reel 1
+  activeReel1 = [...SETTINGS];
+  buildReel(document.getElementById('reel0'), activeReel1);
+
+  const reel0 = document.getElementById('reel0');
+  reel0.style.transition = 'none';
+  reel0.style.transform = 'translateY(0)';
+  const spins0 = 2 * activeReel1.length + settingIdx;
+  setTimeout(()=>{
+    reel0.style.transition = 'transform 1200ms cubic-bezier(0.15,0.85,0.25,1)';
+    reel0.style.transform = `translateY(${-spins0*itemH}px)`;
+  },50);
+
+  // === REEL 2: After reel 1 lands, pick activity from narrowed set ===
+  setTimeout(()=>{
+    activeReel2 = ACTIVITIES[chosenSetting.id];
+    const actIdx = Math.floor(Math.random() * activeReel2.length);
+    chosenActivity = activeReel2[actIdx];
+
+    // Rebuild reel 2 with narrowed items
+    buildReel(document.getElementById('reel1'), activeReel2);
+    const reel1 = document.getElementById('reel1');
+    reel1.style.transition = 'none';
+    reel1.style.transform = 'translateY(0)';
+    const spins1 = 2 * activeReel2.length + actIdx;
+    setTimeout(()=>{
+      reel1.style.transition = 'transform 1000ms cubic-bezier(0.15,0.85,0.25,1)';
+      reel1.style.transform = `translateY(${-spins1*itemH}px)`;
+    },50);
+  }, 1300); // after reel 1 stops
+
+  // === REEL 3: After reel 2 lands, pick finisher from narrowed set ===
+  setTimeout(()=>{
+    activeReel3 = FINISHERS[chosenActivity.id];
+    const finIdx = Math.floor(Math.random() * activeReel3.length);
+    chosenFinisher = activeReel3[finIdx];
+
+    // Rebuild reel 3 with narrowed items
+    buildReel(document.getElementById('reel2'), activeReel3);
+    const reel2 = document.getElementById('reel2');
+    reel2.style.transition = 'none';
+    reel2.style.transform = 'translateY(0)';
+    const spins2 = 2 * activeReel3.length + finIdx;
+    setTimeout(()=>{
+      reel2.style.transition = 'transform 800ms cubic-bezier(0.15,0.85,0.25,1)';
+      reel2.style.transform = `translateY(${-spins2*itemH}px)`;
+    },50);
+  }, 2400); // after reel 2 stops
+
+  // === SHOW RESULT after all 3 reels stop ===
+  setTimeout(()=>{
+    showResult();
+  }, 3500);
+}
+
+function showResult(){
+  // Highlights staggered
+  ['hl0','hl1','hl2'].forEach((id,i)=>{
+    setTimeout(()=>document.getElementById(id).classList.add('show'), i*100);
+  });
+
+  // Sparkle burst
+  const machineRect = document.querySelector('.reels-frame').getBoundingClientRect();
+  spawnSparks(machineRect.left+machineRect.width/2, machineRect.top+machineRect.height/2, 15);
+
+  // Pick a message tailored to the setting
+  const msgs = SETTING_MESSAGES[chosenSetting.id];
+  const msg = msgs[Math.floor(Math.random()*msgs.length)];
+
+  // Combo text
+  const combo = document.getElementById('resultCombo');
+  combo.textContent = `${chosenSetting.emoji} ${chosenSetting.label} + ${chosenActivity.emoji} ${chosenActivity.label} + ${chosenFinisher.emoji} ${chosenFinisher.label}`;
+  setTimeout(()=>combo.classList.add('show'), 100);
+
+  // Message
+  const msgEl = document.getElementById('resultMsg');
+  msgEl.textContent = msg.text;
+  setTimeout(()=>msgEl.classList.add('show'), 300);
+
+  // Tag
+  const tag = document.getElementById('resultTag');
+  tag.textContent = msg.tag;
+  setTimeout(()=>tag.classList.add('show'), 500);
+
+  // Add to history
+  addHistory();
+
+  // Jackpot every 5th spin
+  if(spinNum % 5 === 0){
+    setTimeout(()=>showJackpot(), 1000);
+  }
+
+  // Reset button
+  const btn = document.getElementById('leverBtn');
+  setTimeout(()=>{
+    spinning = false;
+    btn.disabled = false;
+    btn.classList.add('glow');
+    btn.textContent = '🎰 Pull Again!';
+
+    // Silently reset reel positions
+    for(let r=0;r<3;r++){
+      const reel = document.getElementById('reel'+r);
+      reel.style.transition = 'none';
+      reel.style.transform = 'translateY(0)';
     }
-    function spawnBigCelebration(){
-        for(let i=0;i<40;i++){
-            setTimeout(()=>spawnSparks(
-                sCanvas.width*(0.2+Math.random()*0.6),
-                sCanvas.height*(0.2+Math.random()*0.5),5
-            ),i*40);
-        }
-    }
+  }, 800);
+}
 
-    function animP(){
-        sCtx.clearRect(0,0,sCanvas.width,sCanvas.height);
-        for(let i=parts.length-1;i>=0;i--){
-            const p=parts[i];
-            p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.vx*=0.99;
-            p.life-=p.decay;
-            if(p.life<=0){parts.splice(i,1);continue}
-            sCtx.globalAlpha=p.life*0.8;
-            sCtx.fillStyle=p.color;
-            sCtx.beginPath();
-            sCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
-            sCtx.fill();
-            sCtx.globalAlpha=p.life*0.25;
-            sCtx.fillStyle='#fff';
-            sCtx.beginPath();
-            sCtx.arc(p.x,p.y,p.size*0.35,0,Math.PI*2);
-            sCtx.fill();
-        }
-        sCtx.globalAlpha=1;
-        requestAnimationFrame(animP);
-    }
-    animP();
-
-    // ============ BUILD A SINGLE REEL ============
-    function buildReel(reelEl, items){
-        reelEl.innerHTML='';
-        const copies = 5;
-        for(let c=0;c<copies;c++){
-            items.forEach(item=>{
-                const el=document.createElement('div');
-                el.className='reel-item';
-                el.innerHTML=`<div class="reel-emoji">${item.emoji}</div><div class="reel-label">${item.label}</div>`;
-                reelEl.appendChild(el);
-            });
-        }
-    }
-
-    function buildReels(){
-        // Initial build with all settings for reel 1, placeholder for 2 & 3
-        activeReel1 = [...SETTINGS];
-        // Use the first setting's activities as initial display
-        activeReel2 = ACTIVITIES[SETTINGS[0].id];
-        activeReel3 = FINISHERS[activeReel2[0].id];
-
-        buildReel(document.getElementById('reel0'), activeReel1);
-        buildReel(document.getElementById('reel1'), activeReel2);
-        buildReel(document.getElementById('reel2'), activeReel3);
-    }
-
-    // ============ CASCADING SPIN ============
-    function spin(){
-        if(spinning) return;
-        spinning = true;
-        spinNum++;
-        document.getElementById('spinCount').textContent = `Spin #${spinNum}`;
-
-        const btn = document.getElementById('leverBtn');
-        btn.disabled = true;
-        btn.classList.remove('glow');
-        btn.textContent = '🎰 Spinning...';
-
-        // Hide previous results
-        document.getElementById('resultCombo').classList.remove('show');
-        document.getElementById('resultMsg').classList.remove('show');
-        document.getElementById('resultTag').classList.remove('show');
-        ['hl0','hl1','hl2'].forEach(id=>document.getElementById(id).classList.remove('show'));
-
-        const itemH = 90;
-
-        // === REEL 1: Pick setting ===
-        const settingIdx = Math.floor(Math.random() * SETTINGS.length);
-        chosenSetting = SETTINGS[settingIdx];
-
-        // Build & spin reel 1
-        activeReel1 = [...SETTINGS];
-        buildReel(document.getElementById('reel0'), activeReel1);
-
-        const reel0 = document.getElementById('reel0');
-        reel0.style.transition = 'none';
-        reel0.style.transform = 'translateY(0)';
-        const spins0 = 2 * activeReel1.length + settingIdx;
-        setTimeout(()=>{
-            reel0.style.transition = 'transform 1200ms cubic-bezier(0.15,0.85,0.25,1)';
-            reel0.style.transform = `translateY(${-spins0*itemH}px)`;
-        },50);
-
-        // === REEL 2: After reel 1 lands, pick activity from narrowed set ===
-        setTimeout(()=>{
-            activeReel2 = ACTIVITIES[chosenSetting.id];
-            const actIdx = Math.floor(Math.random() * activeReel2.length);
-            chosenActivity = activeReel2[actIdx];
-
-            // Rebuild reel 2 with narrowed items
-            buildReel(document.getElementById('reel1'), activeReel2);
-            const reel1 = document.getElementById('reel1');
-            reel1.style.transition = 'none';
-            reel1.style.transform = 'translateY(0)';
-            const spins1 = 2 * activeReel2.length + actIdx;
-            setTimeout(()=>{
-                reel1.style.transition = 'transform 1000ms cubic-bezier(0.15,0.85,0.25,1)';
-                reel1.style.transform = `translateY(${-spins1*itemH}px)`;
-            },50);
-        }, 1300); // after reel 1 stops
-
-        // === REEL 3: After reel 2 lands, pick finisher from narrowed set ===
-        setTimeout(()=>{
-            activeReel3 = FINISHERS[chosenActivity.id];
-            const finIdx = Math.floor(Math.random() * activeReel3.length);
-            chosenFinisher = activeReel3[finIdx];
-
-            // Rebuild reel 3 with narrowed items
-            buildReel(document.getElementById('reel2'), activeReel3);
-            const reel2 = document.getElementById('reel2');
-            reel2.style.transition = 'none';
-            reel2.style.transform = 'translateY(0)';
-            const spins2 = 2 * activeReel3.length + finIdx;
-            setTimeout(()=>{
-                reel2.style.transition = 'transform 800ms cubic-bezier(0.15,0.85,0.25,1)';
-                reel2.style.transform = `translateY(${-spins2*itemH}px)`;
-            },50);
-        }, 2400); // after reel 2 stops
-
-        // === SHOW RESULT after all 3 reels stop ===
-        setTimeout(()=>{
-            showResult();
-        }, 3500);
-    }
-
-    function showResult(){
-        // Highlights staggered
-        ['hl0','hl1','hl2'].forEach((id,i)=>{
-            setTimeout(()=>document.getElementById(id).classList.add('show'), i*100);
-        });
-
-        // Sparkle burst
-        const machineRect = document.querySelector('.reels-frame').getBoundingClientRect();
-        spawnSparks(machineRect.left+machineRect.width/2, machineRect.top+machineRect.height/2, 15);
-
-        // Pick a message tailored to the setting
-        const msgs = SETTING_MESSAGES[chosenSetting.id];
-        const msg = msgs[Math.floor(Math.random()*msgs.length)];
-
-        // Combo text
-        const combo = document.getElementById('resultCombo');
-        combo.textContent = `${chosenSetting.emoji} ${chosenSetting.label} + ${chosenActivity.emoji} ${chosenActivity.label} + ${chosenFinisher.emoji} ${chosenFinisher.label}`;
-        setTimeout(()=>combo.classList.add('show'), 100);
-
-        // Message
-        const msgEl = document.getElementById('resultMsg');
-        msgEl.textContent = msg.text;
-        setTimeout(()=>msgEl.classList.add('show'), 300);
-
-        // Tag
-        const tag = document.getElementById('resultTag');
-        tag.textContent = msg.tag;
-        setTimeout(()=>tag.classList.add('show'), 500);
-
-        // Add to history
-        addHistory();
-
-        // Jackpot every 5th spin
-        if(spinNum % 5 === 0){
-            setTimeout(()=>showJackpot(), 1000);
-        }
-
-        // Reset button
-        const btn = document.getElementById('leverBtn');
-        setTimeout(()=>{
-            spinning = false;
-            btn.disabled = false;
-            btn.classList.add('glow');
-            btn.textContent = '🎰 Pull Again!';
-
-            // Silently reset reel positions
-            for(let r=0;r<3;r++){
-                const reel = document.getElementById('reel'+r);
-                reel.style.transition = 'none';
-                reel.style.transform = 'translateY(0)';
-            }
-        }, 800);
-    }
-
-    function addHistory(){
-        const hist = document.getElementById('history');
-        const el = document.createElement('div');
-        el.className='history-item';
-        el.innerHTML=`
+function addHistory(){
+  const hist = document.getElementById('history');
+  const el = document.createElement('div');
+  el.className='history-item';
+  el.innerHTML=`
     <div class="hist-emojis">${chosenSetting.emoji}${chosenActivity.emoji}${chosenFinisher.emoji}</div>
     <div class="hist-text">${chosenSetting.label} + ${chosenActivity.label} + ${chosenFinisher.label}</div>
   `;
-        hist.prepend(el);
-        while(hist.children.length > 10) hist.removeChild(hist.lastChild);
-    }
+  hist.prepend(el);
+  while(hist.children.length > 10) hist.removeChild(hist.lastChild);
+}
 
-    function showJackpot(){
-        const jp = JACKPOTS[Math.floor(Math.random()*JACKPOTS.length)];
-        document.getElementById('jpEmoji').textContent = jp.emoji;
-        document.getElementById('jpTitle').textContent = jp.title;
-        document.getElementById('jpText').textContent = jp.text;
-        document.getElementById('jpNote').textContent = jp.note;
-        document.getElementById('jackpotOverlay').classList.add('active');
-        spawnBigCelebration();
-    }
+function showJackpot(){
+  const jp = JACKPOTS[Math.floor(Math.random()*JACKPOTS.length)];
+  document.getElementById('jpEmoji').textContent = jp.emoji;
+  document.getElementById('jpTitle').textContent = jp.title;
+  document.getElementById('jpText').textContent = jp.text;
+  document.getElementById('jpNote').textContent = jp.note;
+  document.getElementById('jackpotOverlay').classList.add('active');
+  spawnBigCelebration();
+}
 
-    function closeJackpot(){
-        document.getElementById('jackpotOverlay').classList.remove('active');
-    }
+function closeJackpot(){
+  document.getElementById('jackpotOverlay').classList.remove('active');
+}
 
-    // ============ START ============
-    function startGame(){
-        document.getElementById('startScreen').classList.add('hidden');
-        setTimeout(()=>{
-            document.getElementById('startScreen').style.display='none';
-            document.getElementById('gameScreen').classList.add('active');
-            buildReels();
-        },500);
-    }
+// ============ START ============
+function startGame(){
+  document.getElementById('startScreen').classList.add('hidden');
+  setTimeout(()=>{
+    document.getElementById('startScreen').style.display='none';
+    document.getElementById('gameScreen').classList.add('active');
+    buildReels();
+  },500);
+}
+
+// ============ WEDDING COUNTDOWN ============
+// March 24, 2026 at 4:00 PM Cairo time (UTC+2)
+const WEDDING_DATE = new Date('2026-03-24T16:00:00+02:00');
+
+function updateCountdown(){
+  const now = new Date();
+  const diff = WEDDING_DATE - now;
+
+  if(diff <= 0){
+    document.getElementById('cdDays').textContent = '0';
+    document.getElementById('cdHours').textContent = '0';
+    document.getElementById('cdMins').textContent = '0';
+    document.getElementById('cdSecs').textContent = '0';
+    document.querySelector('.countdown-label').textContent = '💒 Today is the day! 💕';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs = Math.floor((diff % (1000*60)) / 1000);
+
+  document.getElementById('cdDays').textContent = days;
+  document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cdMins').textContent = String(mins).padStart(2,'0');
+  document.getElementById('cdSecs').textContent = String(secs).padStart(2,'0');
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
 </script>
 </body>
 </html>
