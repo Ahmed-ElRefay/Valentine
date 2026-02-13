@@ -4,35 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Love Machine 🎰</title>
+    <title>Our Little Love Game 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root{
-            --parchment:#FFF0F3;
-            --parchment-dark:#F5D5DC;
-            --parchment-deep:#E8B8C4;
-            --cream:#FFF8F9;
-            --warm-white:#FFFAFC;
-            --ink:#4A2836;
-            --ink-light:#6B4558;
-            --ink-faded:#A07888;
-            --rose:#D4728A;
-            --rose-light:#F0A8BA;
-            --rose-pale:#FAD4DE;
-            --sage:#C49AAE;
-            --sage-light:#DCC0CC;
-            --butter:#E8A8B8;
-            --butter-light:#F5D0D8;
-            --sky:#D4A8C0;
-            --berry:#8A4060;
-            --berry-light:#C07898;
-            --rust:#C87890;
-            --rust-light:#E0A8B8;
-            --gold-trim:#D4889A;
-            --machine-bg:#F5D5DC;
-            --machine-border:#E0B8C4;
-            --shadow:rgba(74,40,54,0.08);
-            --shadow-lg:rgba(74,40,54,0.12);
+            --parchment:#FFF6ED;
+            --parchment-dark:#F0E0CC;
+            --parchment-deep:#DDC8AE;
+            --cream:#FFFCF7;
+            --warm-white:#FFFDF8;
+            --ink:#3E2C22;
+            --ink-light:#6B5040;
+            --ink-faded:#A08870;
+            --rose:#D48068;
+            --rose-light:#EAB8A4;
+            --rose-pale:#F5DDD2;
+            --sage:#8EAA80;
+            --sage-light:#B8CCA8;
+            --butter:#E4B86A;
+            --butter-light:#F2DCA0;
+            --sky:#C8B498;
+            --berry:#8A5040;
+            --berry-light:#C48870;
+            --rust:#C47850;
+            --rust-light:#E0A888;
+            --gold-trim:#D4A050;
+            --machine-bg:#F0E0CC;
+            --machine-border:#DDC8AE;
+            --shadow:rgba(62,44,34,0.08);
+            --shadow-lg:rgba(62,44,34,0.12);
+            --honey:#E8A848;
+            --honey-light:#F5D898;
+            --warm-pink:#E0A098;
+            --warm-pink-light:#F0CCC8;
         }
         *{margin:0;padding:0;box-sizing:border-box}
         html,body{
@@ -47,9 +51,9 @@
         body::before{
             content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             background:
-                    radial-gradient(ellipse at 30% 20%,rgba(212,114,138,0.08) 0%,transparent 50%),
-                    radial-gradient(ellipse at 70% 80%,rgba(196,154,174,0.08) 0%,transparent 50%),
-                    radial-gradient(ellipse at 50% 50%,rgba(232,168,184,0.06) 0%,transparent 60%);
+                    radial-gradient(ellipse at 30% 20%,rgba(212,128,104,0.06) 0%,transparent 50%),
+                    radial-gradient(ellipse at 70% 80%,rgba(142,170,128,0.06) 0%,transparent 50%),
+                    radial-gradient(ellipse at 50% 50%,rgba(228,184,106,0.06) 0%,transparent 60%);
         }
         body::after{
             content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.2;
@@ -75,7 +79,17 @@
         }
         #startScreen.hidden{opacity:0;transform:scale(0.95);pointer-events:none}
 
-        .s-icon{font-size:64px;margin-bottom:12px;animation:bob 3s ease-in-out infinite}
+        .s-photo{
+            width:120px;height:120px;border-radius:50%;
+            overflow:hidden;margin-bottom:16px;
+            border:3px solid var(--parchment-deep);
+            box-shadow:0 4px 20px var(--shadow-lg);
+            animation:bob 3s ease-in-out infinite;
+            background:var(--parchment-dark);
+            display:flex;align-items:center;justify-content:center;
+        }
+        .s-photo img{width:100%;height:100%;object-fit:cover;display:block}
+        .s-photo .placeholder-emoji{font-size:48px}
         @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
         .s-title{
@@ -100,8 +114,8 @@
             padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;
         }
         .pill-r{background:var(--rose-pale);color:var(--berry)}
-        .pill-s{background:rgba(196,154,174,0.25);color:var(--berry)}
-        .pill-b{background:var(--butter-light);color:var(--berry)}
+        .pill-s{background:var(--sage-light);color:#4A6A3E}
+        .pill-b{background:var(--butter-light);color:#8A6A2A}
 
         .btn{
             font-family:'Cormorant Garamond',serif;
@@ -150,29 +164,38 @@
             border-bottom:1.5px solid var(--parchment-deep);
         }
         .machine-top h2{
-            font-family:'Cormorant Garamond',serif;
-            font-size:22px;font-weight:700;font-style:italic;
-            color:var(--ink);
-        }
-        .machine-top .stars{
-            font-size:12px;color:var(--gold-trim);letter-spacing:4px;
-            margin-top:2px;
+            font-family:'Caveat',cursive;
+            font-size:16px;font-weight:600;
+            color:var(--ink-light);
+            font-style:normal;
         }
 
         /* ===== SLOT REELS ===== */
         .reels-frame{
-            padding:20px 16px;
-            display:flex;gap:8px;justify-content:center;
+            padding:16px 16px 8px;
             background:var(--warm-white);
+        }
+        .reels-row{
+            display:flex;gap:8px;justify-content:center;
+        }
+        .reel-wrapper{
+            flex:1;max-width:100px;
+            display:flex;flex-direction:column;align-items:center;gap:6px;
+        }
+        .slot-label{
+            font-family:'Caveat',cursive;
+            font-size:14px;font-weight:700;
+            color:var(--ink-faded);
+            letter-spacing:0.5px;
         }
 
         .reel-container{
-            flex:1;max-width:100px;height:90px;
+            width:100%;height:90px;
             overflow:hidden;position:relative;
             background:var(--cream);
             border:1.5px solid var(--parchment-deep);
             border-radius:14px;
-            box-shadow:inset 0 2px 6px rgba(59,47,47,0.06);
+            box-shadow:inset 0 2px 6px rgba(62,44,34,0.06);
         }
 
         /* Fade edges */
@@ -269,7 +292,7 @@
             background:linear-gradient(135deg,var(--rose),var(--berry-light));
             color:white;border:none;border-radius:50px;
             cursor:pointer;touch-action:manipulation;
-            box-shadow:0 4px 16px rgba(196,135,142,0.3);
+            box-shadow:0 4px 16px rgba(212,128,104,0.3);
             transition:all 0.2s;
             letter-spacing:0.5px;
         }
@@ -281,8 +304,8 @@
             animation:leverGlow 1.5s ease-in-out infinite;
         }
         @keyframes leverGlow{
-            0%,100%{box-shadow:0 4px 16px rgba(212,114,138,0.3)}
-            50%{box-shadow:0 4px 28px rgba(212,114,138,0.5)}
+            0%,100%{box-shadow:0 4px 16px rgba(212,128,104,0.3)}
+            50%{box-shadow:0 4px 28px rgba(212,128,104,0.5)}
         }
 
         /* ===== HISTORY STRIP ===== */
@@ -296,7 +319,7 @@
         .history-item{
             display:flex;align-items:center;gap:8px;
             padding:8px 12px;
-            background:rgba(255,240,243,0.6);
+            background:rgba(255,246,237,0.7);
             border-radius:12px;margin-bottom:6px;
             animation:histSlide 0.3s ease;
             border:1px solid var(--parchment-dark);
@@ -338,7 +361,7 @@
         .jackpot-card::before{
             content:'';position:absolute;top:0;left:0;right:0;height:5px;
             border-radius:24px 24px 0 0;
-            background:linear-gradient(90deg,var(--rose-light),var(--butter),var(--rose-pale));
+            background:linear-gradient(90deg,var(--rose-light),var(--butter),var(--sage-light));
         }
         .jp-emoji{font-size:52px;margin-bottom:8px}
         .jp-title{
@@ -412,13 +435,17 @@
 
 <!-- ===== START ===== -->
 <div id="startScreen">
-    <div class="s-icon">🎰</div>
+    <div class="s-photo">
+        <!-- Replace src with your photo: e.g. src="photo.jpg" -->
+        <img src="photo.jpg" alt="Us" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="placeholder-emoji" style="display:none">💕</div>
+    </div>
     <div class="s-title">Our Little Love Game</div>
     <div class="s-sub">every spin you win because I already did</div>
     <div class="s-name">~ made with love for my Tamtam ~</div>
 
     <div class="countdown-wrapper">
-        <div class="countdown-label">💒 Counting down to forever...</div>
+        <div class="countdown-label">Counting down to forever...</div>
         <div class="countdown-boxes">
             <div class="cd-box"><div class="cd-num" id="cdDays">--</div><div class="cd-unit">days</div></div>
             <div class="cd-box"><div class="cd-num" id="cdHours">--</div><div class="cd-unit">hours</div></div>
@@ -444,22 +471,32 @@
 
     <div class="machine">
         <div class="machine-top">
-            <h2>Every Spin Wins</h2>
-            <div class="stars">Setting → Activity → Touch ✦</div>
+            <h2>Where every moment with you is a win</h2>
         </div>
 
         <div class="reels-frame">
-            <div class="reel-container">
-                <div class="reel" id="reel0"></div>
-                <div class="reel-highlight" id="hl0"></div>
-            </div>
-            <div class="reel-container">
-                <div class="reel" id="reel1"></div>
-                <div class="reel-highlight" id="hl1"></div>
-            </div>
-            <div class="reel-container">
-                <div class="reel" id="reel2"></div>
-                <div class="reel-highlight" id="hl2"></div>
+            <div class="reels-row">
+                <div class="reel-wrapper">
+                    <div class="slot-label">I</div>
+                    <div class="reel-container">
+                        <div class="reel" id="reel0"></div>
+                        <div class="reel-highlight" id="hl0"></div>
+                    </div>
+                </div>
+                <div class="reel-wrapper">
+                    <div class="slot-label">Love</div>
+                    <div class="reel-container">
+                        <div class="reel" id="reel1"></div>
+                        <div class="reel-highlight" id="hl1"></div>
+                    </div>
+                </div>
+                <div class="reel-wrapper">
+                    <div class="slot-label">You</div>
+                    <div class="reel-container">
+                        <div class="reel" id="reel2"></div>
+                        <div class="reel-highlight" id="hl2"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -470,7 +507,7 @@
         </div>
 
         <div class="lever-area">
-            <button class="lever-btn glow" id="leverBtn" onclick="spin()">🎰 Pull!</button>
+            <button class="lever-btn glow" id="leverBtn" onclick="spin()">Pull!</button>
         </div>
     </div>
 
@@ -660,7 +697,7 @@
     addEventListener('resize',resizeC);
 
     function spawnSparks(x,y,count=10){
-        const cols=['#D4728A','#E8A8B8','#F0A8BA','#C49AAE','#C07898','#FAD4DE'];
+        const cols=['#D48068','#8EAA80','#E4B86A','#C8B498','#E0A098','#EAB8A4'];
         for(let i=0;i<count;i++){
             const a=(i/count)*Math.PI*2+Math.random()*0.5;
             const sp=1.5+Math.random()*3;
@@ -740,7 +777,7 @@
         const btn = document.getElementById('leverBtn');
         btn.disabled = true;
         btn.classList.remove('glow');
-        btn.textContent = '🎰 Spinning...';
+        btn.textContent = 'Spinning...';
 
         // Hide previous results
         document.getElementById('resultCombo').classList.remove('show');
@@ -852,7 +889,7 @@
             spinning = false;
             btn.disabled = false;
             btn.classList.add('glow');
-            btn.textContent = '🎰 Pull Again!';
+            btn.textContent = 'Pull Again!';
 
             // Silently reset reel positions
             for(let r=0;r<3;r++){
@@ -912,7 +949,7 @@
             document.getElementById('cdHours').textContent = '0';
             document.getElementById('cdMins').textContent = '0';
             document.getElementById('cdSecs').textContent = '0';
-            document.querySelector('.countdown-label').textContent = '💒 Today is the day! 💕';
+            document.querySelector('.countdown-label').textContent = 'Today is the day! 💕';
             return;
         }
 
